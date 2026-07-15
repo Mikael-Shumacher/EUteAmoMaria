@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nosso Filme - 15 de Julho de 2026</title>
+    <style>
+        /* TEMA CINEMATOGRÁFICO - AZUL CIANO */
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Montserrat:wght@300;400;600&display=swap');
+
+        body,
+        html {
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #00151a 0%, #008b8b 100%);
+            background-attachment: fixed;
+            color: #f0f0f0;
+            font-family: 'Montserrat', sans-serif;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        /* Efeito de granulação de filme */
+        .grain {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 9999;
+            opacity: 0.05;
+            background-image: url('https://www.transparenttextures.com/patterns/stardust.png');
+        }
+
+        /* Barras Pretas de Cinema */
+        .barra-cinema-top,
+        .barra-cinema-bottom {
+            position: fixed;
+            left: 0;
+            width: 100%;
+            height: 5vh;
+            background-color: #000;
+            z-index: 1000;
+        }
+
+        .barra-cinema-top {
+            top: 0;
+        }
+
+        .barra-cinema-bottom {
+            bottom: 0;
+        }
+
+        /* TELA DE INTRODUÇÃO */
+        #intro {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background-color: rgba(0, 34, 43, 0.85);
+            backdrop-filter: blur(5px);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            transition: opacity 1.5s ease;
+            overflow: hidden;
+        }
+
+        /* FOTOS FLUTUANTES NO FUNDO DA INTRODUÇÃO */
+        .floating-photos-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .foto-flutuante {
+            position: absolute;
+            opacity: 0.15;
+            /* Mantida a opacidade baixa */
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
+            animation: flutuar infinite alternate ease-in-out;
+            object-fit: cover;
+        }
+
+        @keyframes flutuar {
+            0% {
+                transform: translateY(0) rotate(0deg);
+            }
+
+            100% {
+                transform: translateY(-40px) rotate(15deg);
+            }
+        }
+
+        #intro h1 {
+            font-family: 'Cinzel', serif;
+            color: #fff;
+            font-size: 3.5rem;
+            margin-bottom: 10px;
+            text-align: center;
+            letter-spacing: 2px;
+            text-shadow: 0 4px 15px rgba(0, 0, 0, 0.8), 0 0 20px rgba(0, 255, 255, 0.5);
+        }
+
+        .decoracao-linha {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 20px 0;
+            width: 100%;
+        }
+
+        .decoracao-linha::before,
+        .decoracao-linha::after {
+            content: "";
+            height: 1px;
+            background: linear-gradient(to right, transparent, #00ffff, transparent);
+            width: 80px;
+        }
+
+        .losango {
+            width: 8px;
+            height: 8px;
+            background-color: #00ffff;
+            transform: rotate(45deg);
+            margin: 0 15px;
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.8);
+        }
+
+        .btn-play {
+            margin-top: 40px;
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            background-color: #e50914;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            text-transform: uppercase;
+            font-weight: 600;
+            letter-spacing: 1px;
+            box-shadow: 0 0 20px rgba(229, 9, 20, 0.4);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .btn-play:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 30px rgba(229, 9, 20, 0.6);
+        }
+
+        .icone-play {
+            width: 0;
+            height: 0;
+            border-top: 8px solid transparent;
+            border-bottom: 8px solid transparent;
+            border-left: 12px solid white;
+        }
+
+        #conteudo-filme {
+            display: none;
+            padding: 10vh 0;
+        }
+
+        header {
+            text-align: center;
+            padding: 50px 20px;
+            animation: fadeIn 3s ease;
+        }
+
+        header h2 {
+            font-family: 'Cinzel', serif;
+            font-size: 2.5rem;
+            color: #fff;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            text-shadow: 0 4px 10px rgba(0, 0, 0, 0.8);
+        }
+
+        .coracao {
+            position: relative;
+            width: 20px;
+            height: 20px;
+            background-color: #e50914;
+            transform: rotate(-45deg);
+            display: inline-block;
+            animation: pulsar 1.5s infinite ease-in-out;
+            margin-top: 5px;
+            box-shadow: 0 0 15px rgba(229, 9, 20, 0.4);
+        }
+
+        .coracao::before,
+        .coracao::after {
+            content: "";
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background-color: #e50914;
+            border-radius: 50%;
+        }
+
+        .coracao::before {
+            top: -10px;
+            left: 0;
+        }
+
+        .coracao::after {
+            top: 0;
+            left: 10px;
+        }
+
+        @keyframes pulsar {
+            0% {
+                transform: rotate(-45deg) scale(1);
+            }
+
+            50% {
+                transform: rotate(-45deg) scale(1.2);
+            }
+
+            100% {
+                transform: rotate(-45deg) scale(1);
+            }
+        }
+
+        /* GALERIA ROLO DE FILME (Agora com scroll automático no JS) */
+        .rolo-de-filme-container {
+            margin: 20px 0 60px 0;
+            background-color: rgba(0, 20, 25, 0.7);
+            backdrop-filter: blur(8px);
+            padding: 30px 0;
+            position: relative;
+            border-top: 1px solid rgba(0, 255, 255, 0.2);
+            border-bottom: 1px solid rgba(0, 255, 255, 0.2);
+        }
+
+        .titulo-secao {
+            text-align: center;
+            color: #fff;
+            font-family: 'Cinzel', serif;
+            font-size: 1.8rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            margin: 0;
+            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.8);
+        }
+
+        .galeria-fotos {
+            display: flex;
+            overflow-x: auto;
+            gap: 15px;
+            padding: 30px 20px;
+            /* scroll-snap-type removido para não travar a animação suave */
+        }
+
+        .galeria-fotos::-webkit-scrollbar {
+            height: 8px;
+        }
+
+        .galeria-fotos::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        .galeria-fotos::-webkit-scrollbar-thumb {
+            background: #008b8b;
+            border-radius: 4px;
+        }
+
+        .galeria-fotos img {
+            height: 350px;
+            width: auto;
+            max-width: 400px;
+            object-fit: cover;
+            border-radius: 2px;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            transition: transform 0.4s ease, border-color 0.4s ease;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.8);
+        }
+
+        .galeria-fotos img:hover {
+            transform: scale(1.03);
+            border-color: #00ffff;
+        }
+
+        /* LINHA DO TEMPO CRONOLÓGICA */
+        .historia-cronologica {
+            max-width: 800px;
+            margin: 60px auto;
+            padding: 20px 40px;
+            position: relative;
+        }
+
+        .historia-cronologica::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 50px;
+            width: 4px;
+            background: linear-gradient(to bottom, transparent, #00ffff 5%, #00ffff 95%, transparent);
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+        }
+
+        .evento-timeline {
+            position: relative;
+            margin-bottom: 60px;
+            padding-left: 60px;
+        }
+
+        .evento-timeline::before {
+            content: "";
+            position: absolute;
+            left: 2px;
+            top: 0;
+            width: 16px;
+            height: 16px;
+            background-color: #000;
+            border: 4px solid #00ffff;
+            border-radius: 50%;
+            box-shadow: 0 0 15px #00ffff;
+            z-index: 2;
+        }
+
+        .ano-badge {
+            display: inline-block;
+            background-color: #008b8b;
+            color: white;
+            font-family: 'Cinzel', serif;
+            font-size: 1rem;
+            font-weight: bold;
+            padding: 5px 15px;
+            border-radius: 20px;
+            margin-bottom: 15px;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .caixa-texto {
+            background: rgba(0, 20, 25, 0.85);
+            backdrop-filter: blur(10px);
+            padding: 25px 35px;
+            border-radius: 8px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(0, 255, 255, 0.1);
+            transition: transform 0.3s;
+        }
+
+        .caixa-texto:hover {
+            transform: translateX(10px);
+            border-color: rgba(0, 255, 255, 0.4);
+        }
+
+        .caixa-texto h3 {
+            color: #00ffff;
+            font-family: 'Cinzel', serif;
+            font-size: 1.5rem;
+            margin-top: 0;
+            letter-spacing: 1px;
+        }
+
+        .caixa-texto p {
+            line-height: 1.8;
+            font-size: 1.05rem;
+            color: #eee;
+            margin-bottom: 0;
+        }
+
+        .evento-atual .ano-badge {
+            background-color: #00ffff;
+            color: #000;
+        }
+
+        .evento-atual::before {
+            border-color: #fff;
+            background-color: #00ffff;
+            box-shadow: 0 0 20px #00ffff;
+            animation: piscar 2s infinite;
+        }
+
+        @keyframes piscar {
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.3);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        /* CRÉDITOS FINAIS */
+        .creditos-container {
+            margin-top: 80px;
+            height: 450px;
+            overflow: hidden;
+            position: relative;
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.9) 10%, transparent);
+        }
+
+        .creditos {
+            position: absolute;
+            width: 100%;
+            text-align: center;
+            bottom: -100%;
+            animation: subirCreditos 22s linear infinite;
+        }
+
+        .creditos h3 {
+            color: #00ffff;
+            margin-bottom: 10px;
+            font-family: 'Cinzel', serif;
+            font-size: 1.2rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .creditos p {
+            margin-bottom: 40px;
+            font-size: 1.1rem;
+            color: #ddd;
+        }
+
+        .fim-de-filme {
+            margin-top: 80px;
+            margin-bottom: 250px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 30px;
+        }
+
+        @keyframes subirCreditos {
+            0% {
+                bottom: -100%;
+            }
+
+            100% {
+                bottom: 100%;
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .historia-cronologica::before {
+                left: 20px;
+            }
+
+            .evento-timeline {
+                padding-left: 35px;
+            }
+
+            .evento-timeline::before {
+                left: 12px;
+                width: 12px;
+                height: 12px;
+            }
+
+            .galeria-fotos img {
+                height: 280px;
+                width: auto;
+            }
+
+            #intro h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="grain"></div>
+    <div class="barra-cinema-top"></div>
+    <div class="barra-cinema-bottom"></div>
+
+    <!-- TELA DE INTRODUÇÃO COM AS 21 FOTOS DA MARIA FLUTUANDO -->
+    <div id="intro">
+        <div class="floating-photos-container">
+            <!-- Posições aleatórias programadas para preencher a tela -->
+            <img src="imgs/Maria1.jpeg" class="foto-flutuante"
+                style="top: 5%; left: 5%; width: 150px; animation-duration: 9s; animation-delay: 0s;" alt="">
+            <img src="imgs/Maria2.jpeg" class="foto-flutuante"
+                style="top: 15%; left: 80%; width: 180px; animation-duration: 12s; animation-delay: 1s;" alt="">
+            <img src="imgs/Maria3.jpeg" class="foto-flutuante"
+                style="top: 40%; left: 10%; width: 200px; animation-duration: 10s; animation-delay: 2s;" alt="">
+            <img src="imgs/Maria4.jpeg" class="foto-flutuante"
+                style="top: 60%; left: 85%; width: 160px; animation-duration: 14s; animation-delay: 0.5s;" alt="">
+            <img src="imgs/Maria5.jpeg" class="foto-flutuante"
+                style="top: 80%; left: 15%; width: 220px; animation-duration: 11s; animation-delay: 3s;" alt="">
+
+            <img src="imgs/Maria6.jpeg" class="foto-flutuante"
+                style="top: 25%; left: 35%; width: 140px; animation-duration: 8s; animation-delay: 1.5s;" alt="">
+            <img src="imgs/Maria7.jpeg" class="foto-flutuante"
+                style="top: 75%; left: 45%; width: 190px; animation-duration: 13s; animation-delay: 0.2s;" alt="">
+            <img src="imgs/Maria8.jpeg" class="foto-flutuante"
+                style="top: 10%; left: 50%; width: 170px; animation-duration: 9.5s; animation-delay: 2.5s;" alt="">
+            <img src="imgs/Maria9.jpeg" class="foto-flutuante"
+                style="top: 50%; left: 65%; width: 210px; animation-duration: 15s; animation-delay: 1.2s;" alt="">
+            <img src="imgs/Maria10.jpeg" class="foto-flutuante"
+                style="top: 85%; left: 75%; width: 150px; animation-duration: 10.5s; animation-delay: 0.8s;" alt="">
+
+            <img src="imgs/Maria11.jpeg" class="foto-flutuante"
+                style="top: 30%; left: 15%; width: 160px; animation-duration: 12.5s; animation-delay: 3.5s;" alt="">
+            <img src="imgs/Maria12.jpeg" class="foto-flutuante"
+                style="top: 5%; left: 70%; width: 200px; animation-duration: 11.5s; animation-delay: 0.4s;" alt="">
+            <img src="imgs/Maria13.jpeg" class="foto-flutuante"
+                style="top: 45%; left: 85%; width: 180px; animation-duration: 14.5s; animation-delay: 1.8s;" alt="">
+            <img src="imgs/Maria14.jpeg" class="foto-flutuante"
+                style="top: 65%; left: 25%; width: 230px; animation-duration: 9.2s; animation-delay: 2.2s;" alt="">
+            <img src="imgs/Maria15.jpeg" class="foto-flutuante"
+                style="top: 90%; left: 40%; width: 150px; animation-duration: 13.5s; animation-delay: 0.7s;" alt="">
+
+            <img src="imgs/Maria16.jpeg" class="foto-flutuante"
+                style="top: 20%; left: 60%; width: 190px; animation-duration: 10.2s; animation-delay: 2.9s;" alt="">
+            <img src="imgs/Maria17.jpeg" class="foto-flutuante"
+                style="top: 35%; left: 50%; width: 160px; animation-duration: 11.8s; animation-delay: 1.1s;" alt="">
+            <img src="imgs/Maria18.jpeg" class="foto-flutuante"
+                style="top: 5%; left: 90%; width: 175px; animation-duration: 15.5s; animation-delay: 0.3s;" alt="">
+            <img src="imgs/Maria19.jpeg" class="foto-flutuante"
+                style="top: 70%; left: 60%; width: 205px; animation-duration: 9.8s; animation-delay: 3.1s;" alt="">
+            <img src="imgs/Maria20.jpeg" class="foto-flutuante"
+                style="top: 15%; left: 30%; width: 145px; animation-duration: 12.2s; animation-delay: 1.7s;" alt="">
+            <img src="imgs/Maria21.jpeg" class="foto-flutuante"
+                style="top: 85%; left: 5%; width: 185px; animation-duration: 13.2s; animation-delay: 0.9s;" alt="">
+
+            <img src="imgs/foto10.jpeg" class="foto-flutuante"
+                style="top: 25%; left: 65%; width: 190px; animation-duration: 10.2s; animation-delay: 2.9s;" alt="">
+            <img src="imgs/foto20.jpeg" class="foto-flutuante"
+                style="top: 45%; left: 55%; width: 160px; animation-duration: 11.8s; animation-delay: 1.1s;" alt="">
+            <img src="imgs/foto30.jpeg" class="foto-flutuante"
+                style="top: 35%; left: 1%; width: 175px; animation-duration: 15.5s; animation-delay: 0.3s;" alt="">
+            <img src="imgs/foto40.jpeg" class="foto-flutuante"
+                style="top: 40%; left: 35%; width: 205px; animation-duration: 9.8s; animation-delay: 3.1s;" alt="">
+            <img src="imgs/foto50.jpeg" class="foto-flutuante"
+                style="top: 10%; left: 40%; width: 145px; animation-duration: 12.2s; animation-delay: 1.7s;" alt="">
+            <img src="imgs/foto60.jpeg" class="foto-flutuante"
+                style="top: 4%; left: 20%; width: 185px; animation-duration: 13.2s; animation-delay: 0.9s;" alt="">
+        </div>
+
+        <h1>Mikael Shumacher
+            <br>
+            and
+            <br>
+            Maria Allana
+        </h1>
+        <div class="decoracao-linha">
+            <div class="losango"></div>
+        </div>
+        <p style="color: #ddd; font-style: italic; letter-spacing: 1px;">E lá vamos nós para mais um dia 15</p>
+        <p style="color: #999; font-size: 0.9rem; margin-top: 10px;">Recomendado o uso de fones de ouvido</p>
+
+        <button class="btn-play" onclick="iniciarFilme()">
+            <div class="icone-play"></div>
+            Dar o Play
+        </button>
+    </div>
+
+    <!-- TRILHA SONORA -->
+    <audio id="musica-fundo" loop>
+        <source src="musica.mp3" type="audio/mpeg">
+    </audio>
+
+    <div id="conteudo-filme">
+
+        <header>
+            <h2>Feliz Nosso Dia 15! <span class="coracao"></span></h2>
+            <p style="color: #ddd; font-size: 1.1rem; letter-spacing: 1px; text-shadow: 0 2px 4px #000;">O roteiro mais
+                bonito que eu já vivi.</p>
+        </header>
+
+        <!-- GALERIA DE 62 FOTOS (Animação de slide infinito iniciada via JavaScript) -->
+        <div class="rolo-de-filme-container">
+            <h3 class="titulo-secao">Cenas Favoritas</h3>
+            <div class="decoracao-linha" style="margin: 10px auto;">
+                <div class="losango" style="width: 5px; height: 5px;"></div>
+            </div>
+            <p
+                style="text-align: center; color: #aaa; font-size: 11px; text-transform: uppercase; letter-spacing: 1px;">
+                Deixe rolar ou arraste para ver a nossa trajetória</p>
+
+            <div class="galeria-fotos" id="galeria-scroll">
+                <img src="imgs/foto01.jpeg" alt="">
+                <img src="imgs/foto02.jpeg" alt="">
+                <img src="imgs/foto03.jpeg" alt="">
+                <img src="imgs/foto04.jpeg" alt="">
+                <img src="imgs/foto05.jpeg" alt="">
+                <img src="imgs/foto06.jpeg" alt="">
+                <img src="imgs/foto07.jpeg" alt="">
+                <img src="imgs/foto08.jpeg" alt="">
+                <img src="imgs/foto09.jpeg" alt="">
+                <img src="imgs/foto10.jpeg" alt="">
+                <img src="imgs/foto11.jpeg" alt="">
+                <img src="imgs/foto12.jpeg" alt="">
+                <img src="imgs/foto13.jpeg" alt="">
+                <img src="imgs/foto14.jpeg" alt="">
+                <img src="imgs/foto15.jpeg" alt="">
+                <img src="imgs/foto16.jpeg" alt="">
+                <img src="imgs/foto17.jpeg" alt="">
+                <img src="imgs/foto18.jpeg" alt="">
+                <img src="imgs/foto19.jpeg" alt="">
+                <img src="imgs/foto20.jpeg" alt="">
+                <img src="imgs/foto21.jpeg" alt="">
+                <img src="imgs/foto22.jpeg" alt="">
+                <img src="imgs/foto23.jpeg" alt="">
+                <img src="imgs/foto24.jpeg" alt="">
+                <img src="imgs/foto25.jpeg" alt="">
+                <img src="imgs/foto26.jpeg" alt="">
+                <img src="imgs/foto27.jpeg" alt="">
+                <img src="imgs/foto28.jpeg" alt="">
+                <img src="imgs/foto29.jpeg" alt="">
+                <img src="imgs/foto30.jpeg" alt="">
+                <img src="imgs/foto31.jpeg" alt="">
+                <img src="imgs/foto32.jpeg" alt="">
+                <img src="imgs/foto33.jpeg" alt="">
+                <img src="imgs/foto34.jpeg" alt="">
+                <img src="imgs/foto35.jpeg" alt="">
+                <img src="imgs/foto36.jpeg" alt="">
+                <img src="imgs/foto37.jpeg" alt="">
+                <img src="imgs/foto38.jpeg" alt="">
+                <img src="imgs/foto39.jpeg" alt="">
+                <img src="imgs/foto40.jpeg" alt="">
+                <img src="imgs/foto41.jpeg" alt="">
+                <img src="imgs/foto42.jpeg" alt="">
+                <img src="imgs/foto43.jpeg" alt="">
+                <img src="imgs/foto44.jpeg" alt="">
+                <img src="imgs/foto45.jpeg" alt="">
+                <img src="imgs/foto46.jpeg" alt="">
+                <img src="imgs/foto47.jpeg" alt="">
+                <img src="imgs/foto48.jpeg" alt="">
+                <img src="imgs/foto49.jpeg" alt="">
+                <img src="imgs/foto50.jpeg" alt="">
+                <img src="imgs/foto51.jpeg" alt="">
+                <img src="imgs/foto52.jpeg" alt="">
+                <img src="imgs/foto53.jpeg" alt="">
+                <img src="imgs/foto54.jpeg" alt="">
+                <img src="imgs/foto55.jpeg" alt="">
+                <img src="imgs/foto56.jpeg" alt="">
+                <img src="imgs/foto57.jpeg" alt="">
+                <img src="imgs/foto58.jpeg" alt="">
+                <img src="imgs/foto59.jpeg" alt="">
+                <img src="imgs/foto60.jpeg" alt="">
+                <img src="imgs/foto61.jpeg" alt="">
+                <img src="imgs/foto62.jpeg" alt="">
+            </div>
+        </div>
+
+        <h3 class="titulo-secao" style="margin-top: 80px;">Nossa Linha do Tempo</h3>
+        <div class="decoracao-linha" style="margin: 10px auto; margin-bottom: 40px;">
+            <div class="losango"></div>
+        </div>
+
+        <div class="historia-cronologica">
+
+            <div class="evento-timeline">
+                <div class="ano-badge">O Início</div>
+                <div class="caixa-texto">
+                    <h3>O Primeiro Take</h3>
+                    <p>Eu (Mikael Shumacher) respondi por acaso os storys de uma gatinha(Maria Allana), fazendo a
+                        cantada
+                        mais brega possível só pra fazer ela sorrir.
+                        <br><br>
+                        "Isso é uma foto ou uma obra de arte?"
+                        <br><br>
+                        E parece que a gatinha gostou tanto que começamos a conversar bastante depois disso.
+
+                    </p>
+                </div>
+            </div>
+
+            <div class="evento-timeline">
+                <div class="ano-badge">As Descobertas</div>
+                <div class="caixa-texto">
+                    <h3>Construindo o Enredo</h3>
+                    <p>Conversa vai e conversa vem, meti o louco e apareci do nada na casa dela com uns chocolates so
+                        pra ver ela pessoalmente, e quando vi aquele rostinho perfeito pela primeira vez<br><br>"MEU PAI
+                        DO
+                        CÉU"<br><br>Foi a coisa mais linda que eu já tinha visto.</p>
+                </div>
+            </div>
+
+            <div class="evento-timeline">
+                <div class="ano-badge">A Parceria</div>
+                <div class="caixa-texto">
+                    <h3>Nosso Lugar Seguro</h3>
+                    <p>Quando percebi que tava doido de apaixonado, comecei a querer ver ela todo santo dia e de alguma
+                        forma tentava aparecer do nada com presentes. Foi assim que toda semana tava lá a minha moto na
+                        frente da casa dela e eu com uma sacola de presentes.</p>
+                </div>
+            </div>
+
+            <div class="evento-timeline evento-atual">
+                <div class="ano-badge">Hoje - 15/07/2026</div>
+                <div class="caixa-texto">
+                    <h3>Dias Atuais</h3>
+                    <p>E assim a gente vai seguindo, chegamos agora em mais um dia 15, espero que tenham mais pra eu
+                        fazer sempre outra coisa aleatória que ela com toda certeza nem tava imaginando. Bjos</p>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="creditos-container">
+            <div class="creditos">
+                <h3>Produção Executiva</h3>
+                <p>O Papai do céu</p>
+
+                <h3>Atriz Principal</h3>
+                <p>A mulher mais linda do mundo</p>
+
+                <h3>Ator Principal</h3>
+                <p>O cara mais sortudo do mundo (Eu)</p>
+
+                <h3>Trilha Sonora</h3>
+                <p>As batidas dos nossos corações</p>
+
+                <div class="fim-de-filme">
+                    <h3 style="font-size: 2rem;">Eu Te Amo!</h3>
+                    <p>A história continua...</p>
+                    <span class="coracao"></span>
+                </div>
+
+                <img src="imgs/euiela.jpeg" height="400px">
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        function iniciarFilme() {
+            // Efeito de sumir a tela inicial
+            document.getElementById('intro').style.opacity = '0';
+
+            setTimeout(function () {
+                // Esconde a tela inicial e mostra o conteúdo
+                document.getElementById('intro').style.display = 'none';
+                document.getElementById('conteudo-filme').style.display = 'block';
+
+                // Dá play na música
+                var audio = document.getElementById('musica-fundo');
+                audio.volume = 0.5;
+                audio.play().catch(function () {
+                    console.log("Áudio bloqueado pelo navegador.");
+                });
+
+                // Inicia o deslizamento automático das fotos da galeria
+                iniciarRolagemGaleria();
+            }, 1000);
+        }
+
+        // Função que faz as fotos do rolo de filme se moverem sozinhas
+        function iniciarRolagemGaleria() {
+            const galeria = document.getElementById('galeria-scroll');
+
+            setInterval(() => {
+                galeria.scrollLeft += 1; // Move 1 pixel por vez
+
+                // Se a rolagem chegar no final, volta as fotos pro início criando um loop infinito
+                if (galeria.scrollLeft >= (galeria.scrollWidth - galeria.clientWidth - 1)) {
+                    galeria.scrollLeft = 0;
+                }
+            }, 25); // Velocidade do movimento (quanto menor o número, mais rápido)
+        }
+    </script>
+</body>
+
+</html>
